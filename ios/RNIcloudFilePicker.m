@@ -20,7 +20,7 @@ RCT_EXPORT_METHOD(showFilePicker:(RCTResponseSenderBlock) callback)
         self.alertWindow.windowLevel = UIWindowLevelAlert + 1;
         [self.alertWindow makeKeyAndVisible];
         
-        self.documentPickerController = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:@[(NSString*)kUTTypePDF, (NSString*)kUTTypeJPEG, (NSString*)kUTTypePNG, (NSString*)kUTTypeGIF] inMode:UIDocumentPickerModeImport];
+        self.documentPickerController = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:@[(NSString*)kUTTypeData] inMode:UIDocumentPickerModeImport];
         self.documentPickerController.delegate = self;
         [self.alertWindow.rootViewController presentViewController: self.documentPickerController animated: YES completion: nil];
     });
@@ -31,9 +31,10 @@ RCT_EXPORT_METHOD(showFilePicker:(RCTResponseSenderBlock) callback)
     [self cleanup];
     
     NSData* data = [[NSData alloc] initWithContentsOfURL:url];
-    NSString* dataString = [data base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+//    NSString* dataString = [data base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+    NSString * size = [[NSString alloc]initWithFormat:@"%lu",(unsigned long)[data length]];
     
-    self.callback(@[@{ @"success": @YES, @"data": dataString, @"filename": [url absoluteString] }]);
+    self.callback(@[@{ @"success": @YES, @"size": size, @"name":[url lastPathComponent], @"path": [url absoluteString] }]);
 }
 
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller {
